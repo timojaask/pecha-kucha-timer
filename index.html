@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<meta name="robots" content="noindex">
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+<style id="jsbin-css">
+
+#body {
+  text-align: center;
+}
+#slide {
+  font-size: 400px;
+  text-align: center;
+  font-weight: bold;
+}
+#seconds {
+  font-size: 100px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+  <button id="restart">Restart</button>
+  <div id="slide">Slide</div>
+  <div id="seconds"></div>
+<script id="jsbin-javascript">
+var slideNumber = 0;
+var secondsSinceSlideStart = 0;
+var numSlides = 20;
+var slideDurationSeconds = 20;
+var slideEndWarningDurationSeconds = 3;
+var timer;
+
+function init() {
+  setupRestartButtonHandler();
+  start();
+}
+
+function setupRestartButtonHandler() {
+  var restartButton = document.getElementById("restart");
+  restartButton.onclick = function(){ start(); };
+}
+
+function start() {
+  clearTimeout(timer);
+  slideNumber = 0;
+  secondsSinceSlideStart = 0;
+  changeSlide();
+  timer = setInterval(function(){
+    onTimerTick();
+  }, 1000);
+  updateSlideDiv(slideNumber);
+  updateSecondsDiv(secondsSinceSlideStart);
+}
+
+function showEndOfPresentation() {
+  clearTimeout(timer);
+  document.body.style.backgroundColor = "green";
+}
+
+function onTimerTick() {
+  secondsSinceSlideStart = secondsSinceSlideStart + 1;
+  if (secondsSinceSlideStart == slideDurationSeconds - slideEndWarningDurationSeconds) {
+    setWarningBackgroundEnabled(true);
+  }
+  if (secondsSinceSlideStart >= slideDurationSeconds) {
+    changeSlide();
+  }
+  updateSecondsDiv(secondsSinceSlideStart);
+}
+
+function changeSlide() {
+  if (slideNumber + 1 > numSlides) {
+    showEndOfPresentation();
+    return;
+  }
+  secondsSinceSlideStart = 0;
+  slideNumber = slideNumber + 1;
+  updateSlideDiv(slideNumber);
+  setWarningBackgroundEnabled(false);
+}
+
+function setWarningBackgroundEnabled(isEnabled) {
+  var color = isEnabled ? "red" : "white";
+  document.body.style.backgroundColor = color;
+}
+
+function updateSlideDiv(slideNumber) {
+  var slideDiv = document.getElementById("slide");
+  slideDiv.innerHTML = slideNumber;
+}
+
+function updateSecondsDiv(seconds) {
+  var secondsDiv = document.getElementById("seconds");
+  secondsDiv.innerHTML = seconds;
+}
+
+init();
+</script>
+</body>
+</html>
